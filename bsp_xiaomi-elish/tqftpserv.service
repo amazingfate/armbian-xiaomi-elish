@@ -1,0 +1,7 @@
+[Unit]
+Description=Trivial File Transfer Protocol server over AF_QIPCRTR
+After=NetworkManager.service systemd-networkd.service
+[Service]
+ExecStart=/usr/local/bin/tqftpserv
+[Install]
+WantedBy=default.target

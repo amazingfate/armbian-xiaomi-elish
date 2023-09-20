@@ -1,0 +1,9 @@
+[Unit]
+Description=Qualcomm bootctl service
+After=NetworkManager.service systemd-networkd.service
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/qbootctl -m b
+[Install]
+WantedBy=default.target

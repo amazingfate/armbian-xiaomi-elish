@@ -1,0 +1,49 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  prepare_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get time
+        id: time
+        uses: nanzm/get-time-action@v1.1
+        with:
+          format: 'YYYYMMDD-HHmm'
+      - name: Create empty release
+        id: release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.time.outputs.time }}
+          body_path: README.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target_commitish: master
+          draft: false
+    outputs:
+      release_id: ${{ steps.release.outputs.id }}
+  build:
+    runs-on: ubuntu-latest
+    needs: prepare_release
+    strategy:
+      matrix:
+        BOARD: [xiaomi-elish]
+        DISTRO: [armbian]
+        FLAVOR: [ubuntu]
+        BRANCH: [sm8250]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Upload Armbian image
+        uses: amazingfate/armbian-compile-action@main
+        if: matrix.DISTRO == 'armbian'
+        with:
+          branch: ${{ matrix.BRANCH }}
+          board: ${{ matrix.BOARD }}
+          flavor: ${{ matrix.FLAVOR }}
+          release-id: ${{ needs.prepare_release.outputs.release_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
