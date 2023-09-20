@@ -8,6 +8,7 @@ rootfs_end_sector=$(gdisk -l ./${image_name}|grep rootfs|awk '{print $3}')
 rm esp*.img rootfs*.img ||true
 dd if=./${image_name} skip=${efi_start_sector} count=$((${efi_end_sector} - ${efi_start_sector})) of=esp.img
 dd if=./${image_name} skip=${rootfs_start_sector} count=$((${rootfs_end_sector} - ${rootfs_start_sector})) of=rootfs.img
+rm ${image_name}
 
 old_rootfs_image=rootfs.img
 old_rootfs_image_mount_dir=rootfs
