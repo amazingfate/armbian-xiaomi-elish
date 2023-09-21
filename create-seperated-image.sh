@@ -59,5 +59,6 @@ e2fsck -p -f ${new_rootfs_image}
 resize2fs -M ${new_rootfs_image}
 xz -z -T0 ${new_rootfs_image}
 xz -z -T0 ${new_esp_image}
-xz -z -T0 armbian-kernel.img
+xz -z -T0 armbian-kernel-boe.img
+xz -z -T0 armbian-kernel-csot.img
 rm ${old_rootfs_image} ${old_esp_image} ||true
