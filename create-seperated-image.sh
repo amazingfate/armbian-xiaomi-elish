@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 image_name=$1
 efi_start_sector=$(gdisk -l ./${image_name}|grep efi|awk '{print $2}')
 efi_end_sector=$(gdisk -l ./${image_name}|grep efi|awk '{print $3}')
@@ -16,9 +16,9 @@ old_rootfs_image_uuid=$(blkid -s UUID -o value ${old_rootfs_image})
 old_esp_image=esp.img
 old_esp_image_mount_dir=esp
 old_esp_image_uuid=$(blkid -s UUID -o value ${old_esp_image})
-new_rootfs_image=rootfs-new.img
+new_rootfs_image=${image_name%*.img}-rootfs.img
 new_rootfs_image_mount_dir=rootfs-new
-new_esp_image=esp-new.img
+new_esp_image=${image_name%*.img}-esp.img
 new_esp_image_mount_dir=esp-new
 mkdir -p ${old_rootfs_image_mount_dir} ${old_esp_image_mount_dir} ${new_rootfs_image_mount_dir} ${new_esp_image_mount_dir}
 truncate --size=8192M ${new_rootfs_image}
@@ -38,9 +38,11 @@ sudo cp -rfp ${old_rootfs_image_mount_dir}/* ${new_rootfs_image_mount_dir}/
 sudo sed -i "s|${old_rootfs_image_uuid}|${new_rootfs_image_uuid}|g" ${new_rootfs_image_mount_dir}/etc/fstab
 sudo sed -i "s|${old_esp_image_uuid}|${new_esp_image_uuid}|g" ${new_rootfs_image_mount_dir}/etc/fstab
 gzip -c ./${new_rootfs_image_mount_dir}/boot/vmlinuz-*-sm8250-arm64 > Image.gz
-cat Image.gz ./${new_rootfs_image_mount_dir}/boot/armbian-dtb-*-sm8250-arm64 > Image.gz-dtb
+for panel_type in boe csot
+do
+cat Image.gz ./${new_rootfs_image_mount_dir}/usr/lib/linux-image-*-sm8250-arm64/qcom/sm8250-xiaomi-elish-${panel_type}.dtb > Image.gz-dtb-${panel_type}
 ./mkbootimg.py \
-        --kernel Image.gz-dtb \
+        --kernel Image.gz-dtb-${panel_type} \
         --ramdisk ./${new_rootfs_image_mount_dir}/boot/initrd.img-*-sm8250-arm64 \
         --base 0x0 \
         --second_offset 0x00f00000 \
@@ -49,7 +51,8 @@ cat Image.gz ./${new_rootfs_image_mount_dir}/boot/armbian-dtb-*-sm8250-arm64 > I
         --ramdisk_offset 0x1000000 \
         --tags_offset 0x100 \
         --pagesize 4096 \
-        -o armbian-kernel.img
+        -o armbian-kernel-${panel_type}.img
+done
 sudo umount ${new_rootfs_image_mount_dir}
 sudo umount ${old_rootfs_image_mount_dir}
 e2fsck -p -f ${new_rootfs_image}
