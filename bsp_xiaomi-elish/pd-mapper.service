@@ -1,7 +1,0 @@
-[Unit]
-Description=Qualcomm PD mapper
-After=NetworkManager.service systemd-networkd.service
-[Service]
-ExecStart=/usr/local/bin/pd-mapper
-[Install]
-WantedBy=default.target
