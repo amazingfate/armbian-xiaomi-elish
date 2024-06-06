@@ -34,7 +34,7 @@ jobs:
         BOARD: [xiaomi-elish]
         DISTRO: [armbian]
         FLAVOR: [ubuntu]
-        BRANCH: [sm8250]
+        BRANCH: [current]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
