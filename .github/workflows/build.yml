@@ -31,7 +31,7 @@ jobs:
     needs: prepare_release
     strategy:
       matrix:
-        BOARD: [xiaomi-elish]
+        BOARD: [xiaomi-elish, oneplus-kebab]
         DISTRO: [armbian]
         FLAVOR: [ubuntu]
         BRANCH: [current]
