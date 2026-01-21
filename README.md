@@ -3,4 +3,4 @@
 
 Armbian has supported xiaomi-elish officially: https://www.armbian.com/xiaomi-pad-5-pro/, you can download images from armbian official site. This repo is for bleeding not released images.
 
-Download: https://github.com/amazingfate/armbian-xiaomi-elish/releases/latest
+Download: ~https://github.com/amazingfate/armbian-xiaomi-elish/releases/latest~ Official images should be availabe via any armbian's mirror site like: https://mirrors.tuna.tsinghua.edu.cn/armbian-releases/xiaomi-elish/archive/
